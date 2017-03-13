@@ -4,10 +4,10 @@
 #include <math.h>
 #include <time.h>
 
-#define COPRIME_MASK 0xFF
+#define COPRIME_MASK 0xFFFF
 
 long double generateProbability(uint32_t);
-short isCoprime(long, long);
+uint32_t isCoprime(long, long);
 
 /*
  *
@@ -42,8 +42,8 @@ long double generateProbability(uint32_t trials)
 	register uint32_t numCoprime = 0;
 	register uint32_t i;
 
-	long rand1;
-	long rand2;
+	register long rand1;
+	register long rand2;
 
 	for(i=0 ; i<trials ; ++i) {
 
@@ -57,7 +57,7 @@ long double generateProbability(uint32_t trials)
 	return (long double)(numCoprime)/trials;
 }
 
-short isCoprime(long rand1, long rand2)
+uint32_t isCoprime(long rand1, long rand2)
 {
 	if(((rand1 | rand2) & 1) == 0) return 0;
 
@@ -71,7 +71,7 @@ short isCoprime(long rand1, long rand2)
 		if(rand2 == 1) return 1;
 
 		if(rand1 > rand2) {
-			long swap = rand1;
+			register long swap = rand1;
 			rand1 = rand2;
 			rand2 = swap;
 		}
