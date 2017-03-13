@@ -4,21 +4,17 @@
 #include <math.h>
 #include <time.h>
 
-#define COPRIME_MASK 0xFFFF
+// Be careful when changing this
+// Keep in mind the size of the random numbers
+#define COPRIME_MASK 0xFFF
 
-long double generateProbability(uint32_t);
-uint32_t isCoprime(long, long);
-
-/*
- *
- * VERY ACCURATE GENERATOR FOR THE DIGITS OF PI
- *
- */
+long double generateProbability(uint64_t);
+uint64_t isCoprime(uint16_t, uint16_t);
 
 int main(int argc, char** argv)
 {
 
-	uint32_t trials = 10000;
+	uint64_t trials = 10000;
 
 	if(argc > 1)
 		trials = atoi(argv[1]);
@@ -37,13 +33,13 @@ int main(int argc, char** argv)
 
 }
 
-long double generateProbability(uint32_t trials)
+long double generateProbability(uint64_t trials)
 {
-	register uint32_t numCoprime = 0;
-	register uint32_t i;
+	register uint64_t numCoprime = 0;
+	register uint64_t i;
 
-	register long rand1;
-	register long rand2;
+	register uint16_t rand1;
+	register uint16_t rand2;
 
 	for(i=0 ; i<trials ; ++i) {
 
@@ -57,7 +53,7 @@ long double generateProbability(uint32_t trials)
 	return (long double)(numCoprime)/trials;
 }
 
-uint32_t isCoprime(long rand1, long rand2)
+uint64_t isCoprime(uint16_t rand1, uint16_t rand2)
 {
 	if(((rand1 | rand2) & 1) == 0) return 0;
 
@@ -71,7 +67,7 @@ uint32_t isCoprime(long rand1, long rand2)
 		if(rand2 == 1) return 1;
 
 		if(rand1 > rand2) {
-			register long swap = rand1;
+			register uint16_t swap = rand1;
 			rand1 = rand2;
 			rand2 = swap;
 		}
