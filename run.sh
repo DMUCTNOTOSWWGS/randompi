@@ -15,6 +15,18 @@ function run_mpi() {
 		make parallel
 	fi
 
+	if [ "$1" -gt "1000" ]
+	then
+		echo -ne "Are you sure you mean to start $1 threads? "
+		read yes
+		case $yes in
+			[yY]*)
+				;;
+			*)
+				exit 0
+				;;
+		esac
+	fi
 	mpirun -np $1 randompi_mpi $2
 
 }

@@ -9,8 +9,8 @@
 // Keep in mind the size of the random numbers
 #define COPRIME_MASK 0xFFF
 
-long double generateProbability(unsigned long long);
-unsigned long long isCoprime(uint16_t, uint16_t);
+long double generateProbability(uint64_t);
+uint64_t isCoprime(uint16_t, uint16_t);
 
 int master(int, char**);
 int slave();
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 int master(int argc, char** argv)
 {
 
-	unsigned long long trials = 10000;
+	uint64_t trials = 10000;
 
 	if(argc > 1)
 		trials = atoi(argv[1]);
@@ -58,7 +58,7 @@ int master(int argc, char** argv)
 
 	int node;
 	for(node = 1; node < nodes; ++node) {
-		MPI_Send(&trials, 1, MPI_UNSIGNED_LONG_LONG, node, tag, MPI_COMM_WORLD);
+		MPI_Send(&trials, 1, MPI_INTEGER8, node, tag, MPI_COMM_WORLD);
 	}
 
 	do {
@@ -74,7 +74,10 @@ int master(int argc, char** argv)
 	long double pi = sqrtl(6.0l/prob);
 
 	printf("Approximation: %Lf\n", pi);
-	printf("Trials:  %llu\n", trials);
+	if(log(trials) < 17)
+		printf("Trials:  %llu\n", (unsigned long long)trials);
+	else
+		printf("Trials (log): %f\n", log(trials));
 	printf("Coprime argument mask: 0x%x\n", COPRIME_MASK);
 
 	return 0;
@@ -84,8 +87,8 @@ int master(int argc, char** argv)
 int slave()
 {
 
-	unsigned long long trials;
-	MPI_Recv(&trials, 1, MPI_UNSIGNED_LONG_LONG, 0, tag, MPI_COMM_WORLD, &status);
+	uint64_t trials;
+	MPI_Recv(&trials, 1, MPI_INTEGER8, 0, tag, MPI_COMM_WORLD, &status);
 	long double prob = generateProbability(trials);
 	MPI_Send(&prob, 1, MPI_LONG_DOUBLE, 0, tag, MPI_COMM_WORLD);
 
@@ -93,12 +96,12 @@ int slave()
 
 }
 
-long double generateProbability(unsigned long long trials)
+long double generateProbability(uint64_t trials)
 {
 	srand(time(NULL));
 
-	register unsigned long long numCoprime = 0;
-	register unsigned long long i;
+	register uint64_t numCoprime = 0;
+	register uint64_t i;
 
 	register uint16_t rand1;
 	register uint16_t rand2;
@@ -115,7 +118,7 @@ long double generateProbability(unsigned long long trials)
 	return (long double)(numCoprime)/trials;
 }
 
-unsigned long long isCoprime(uint16_t rand1, uint16_t rand2)
+uint64_t isCoprime(uint16_t rand1, uint16_t rand2)
 {
 	if(((rand1 | rand2) & 1) == 0) return 0;
 

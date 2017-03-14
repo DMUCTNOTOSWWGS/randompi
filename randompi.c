@@ -8,16 +8,16 @@
 // Keep in mind the size of the random numbers
 #define COPRIME_MASK 0xFFF
 
-long double generateProbability(unsigned long long);
-unsigned long long isCoprime(uint16_t, uint16_t);
+long double generateProbability(uint64_t);
+uint64_t isCoprime(uint16_t, uint16_t);
 
 int main(int argc, char** argv)
 {
 
-	unsigned long long trials = 10000;
+	uint64_t trials = 10000;
 
 	if(argc > 1)
-		trials = atoi(argv[1]);
+		trials = atol(argv[1]);
 
 	srand(time(NULL));
 
@@ -26,17 +26,20 @@ int main(int argc, char** argv)
 	long double pi = sqrtl(6.0l/prob);
 
 	printf("Approximation: %Lf\n", pi);
-	printf("Trials:  %llu\n", trials);
+	if(log(trials) < 17)
+		printf("Trials:  %llu\n", (unsigned long long)trials);
+	else
+		printf("Trials (log): %f\n", log(trials));
 	printf("Coprime argument mask: 0x%x\n", COPRIME_MASK);
 
 	return 0;
 
 }
 
-long double generateProbability(unsigned long long trials)
+long double generateProbability(uint64_t trials)
 {
-	register unsigned long long numCoprime = 0;
-	register unsigned long long i;
+	register uint64_t numCoprime = 0;
+	register uint64_t i;
 
 	register uint16_t rand1;
 	register uint16_t rand2;
@@ -53,7 +56,7 @@ long double generateProbability(unsigned long long trials)
 	return (long double)(numCoprime)/trials;
 }
 
-unsigned long long isCoprime(uint16_t rand1, uint16_t rand2)
+uint64_t isCoprime(uint16_t rand1, uint16_t rand2)
 {
 	if(((rand1 | rand2) & 1) == 0) return 0;
 
