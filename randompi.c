@@ -9,7 +9,7 @@
 #define COPRIME_MASK 0xFFF
 
 long double generateProbability(uint64_t);
-uint64_t isCoprime(uint16_t, uint16_t);
+uint64_t isCoprime(uint32_t, uint32_t);
 
 int main(int argc, char** argv)
 {
@@ -41,8 +41,8 @@ long double generateProbability(uint64_t trials)
 	register uint64_t numCoprime = 0;
 	register uint64_t i;
 
-	register uint16_t rand1;
-	register uint16_t rand2;
+	register uint32_t rand1;
+	register uint32_t rand2;
 
 	for(i=0 ; i<trials ; ++i) {
 
@@ -56,7 +56,7 @@ long double generateProbability(uint64_t trials)
 	return (long double)(numCoprime)/trials;
 }
 
-uint64_t isCoprime(uint16_t rand1, uint16_t rand2)
+uint64_t isCoprime(uint32_t rand1, uint32_t rand2)
 {
 	if(((rand1 | rand2) & 1) == 0) return 0;
 
@@ -70,7 +70,7 @@ uint64_t isCoprime(uint16_t rand1, uint16_t rand2)
 		if(rand2 == 1) return 1;
 
 		if(rand1 > rand2) {
-			register uint16_t swap = rand1;
+			register uint32_t swap = rand1;
 			rand1 = rand2;
 			rand2 = swap;
 		}
